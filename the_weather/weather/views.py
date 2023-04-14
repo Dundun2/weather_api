@@ -68,7 +68,7 @@ def index(request):
             weather_data['rain'] = item['fcstValue']
 
     tmp = {'weather': weather_data}
-    return render(request, 'weather/index.html',tmp)
+    return render(request, 'weather/index2.html',tmp)
 
 
 def result(request):
@@ -193,7 +193,7 @@ def result(request):
 
 
 
-    return render(request, 'weather/result.html', current_tmp)
+    return render(request, 'weather/index.html', current_tmp)
 
 
 def start(request):
@@ -295,4 +295,4 @@ def result2(request):
 
 def result3(request):
 
-    return render(request,'weather/result3.html')
+    return render(request,'weather/index.html')

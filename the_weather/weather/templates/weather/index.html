@@ -1,73 +1,395 @@
-
 <!DOCTYPE html>
 {% load static %}
-<h1>"index.html 입니다"</h1>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>What's the weather like?</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
+    <!-- jquery 사용 -->
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>project</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}"/>
+    <!-- Font Awesome icons (free version)-->0
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link rel="preconnect" href="https://fonts.gstatic.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap"
+          rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&amp;display=swap"
+          rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'styles.css' %}" rel="stylesheet"/>
+
+    <style>
+        .gradient-custom {
+            /* fallback for old browsers */
+            background: #ffffff;
+
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 236, 210, 1));
+
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 236, 210, 1))
+        }
+
+        img {
+            float: right;
+        }
+
+        .carousel-indicators li {
+            background-color: #282828;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+    #grid{
+        display:grid;
+        grid-template-rows: 1fr 2fr 1fr;
+    }
+    </style>
 </head>
+
+
 <body>
-    <section class="hero is-primary">
-        <div class="hero-body">
-            <div class="container">
-                <h1 class="title">
-                    What's the weather like?
-                </h1>
+<!-- Background Video-->
+<video class="bg-video" playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+    <source src="{% static 'assets/mp4/weather_video.mp4' %}" type="video/mp4"/>
+</video>
+<!-- Masthead-->
+<div class="masthead">
+    <div class="masthead-content text-white">
+        <div class="container-fluid px-4 px-lg-0">
+            <h1 class="fst-italic lh-1 mb-4">Weather & Clothes</h1>
+            <p class="mb-5">날씨에 맞는 옷을 추천받으세요!</p>
+            <!-- 지도 부분 -->
+            <!-- kakao API -->
+            <script type="text/javascript"
+                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=e443c812207cc3e160a9117574e67b76&libraries=services,clusterer"></script>
+            <div>
+                <p></p>
+                <table>
+                    <tr>
+                        <td>주소</td>
+                        <td><input type="text" name="detailAddress" id="address"></td>
+                        <td>
+                            <button type="button" id="searchBtn">Search</button>
+                        </td>
+                    </tr>
+
+                </table>
+                <p></p>
             </div>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-offset-4 is-4">
-                    <form method="POST">
-                        <div class="field has-addons">
-                            <div class="control is-expanded">
-                                <input class="input" type="text" placeholder="City Name">
+            <div class="row input-group-newsletter">
+
+                <div id="grid">
+                    <div id="map"
+                         style="width: 500px; height: 160px; margin-right:10px; margin-bottom: 10px; border: 1px solid rgb(207, 207, 207); border-radius: 30px; margin-top: 20px; box-shadow: rgb(207, 207, 207) 0px 0px 13px; position: relative; overflow: hidden; background: url(&quot;https://t1.daumcdn.net/mapjsapi/images/bg_tile.png&quot;);">
+                    </div>
+
+
+                    <div class="card" style="color: #4B515D; border-radius: 35px;">
+                        <div class="card-body p-4">
+
+                            <div class="d-flex">
+                                <h6 class="flex-grow-1"></h6>
+                                <h6>{{weather.time}}</h6>
                             </div>
-                            <div class="control">
-                                <button class="button is-info">
-                                    Add City
-                                </button>
+
+                            <div class="d-flex flex-column text-center mt-5 mb-4">
+                                <h6 class="display-4 mb-0 font-weight-bold" style="color: #1C2331;">
+                                    {{weather.tmp}}°C </h6>
+                                <span class="small" style="color: #868B94">{{weather.sky}}</span>
                             </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-offset-4 is-4">
-                    <div class="box">
-                        <article class="media">
-                            <div class="media-left">
-                                <figure class="image is-50x50">
-                                    <img src="http://openweathermap.org/img/w/10d.png" alt="Image">
-                                </figure>
-                            </div>
-                            <div class="media-content">
-                                <div class="content">
-                                    <p>
-                                        <span class="title">현재 온도는</span>
-                                        <br>
-                                        <span class="subtitle"></span>
-                                        <br>  {{weather.tmp}}도 입니다
-                                    </p>
+
+                            <div class="d-flex align-items-center">
+                                <div class="flex-grow-1" style="font-size: 1rem;">
+                                    <div><i class="fas fa-wind fa-fw" style="color: #868B94;"></i> <span class="ms-1">풍속:{{weather.wind}}m/s
+                  </span></div>
+                                    <div><i class="fas fa-tint fa-fw" style="color: #868B94;"></i> <span class="ms-1">습도:{{weather.hum}}% </span>
+                                    </div>
+                                    <div>
+                                        <img src="../static/img/{{weather.img}}"
+                                             width="100px">
+                                    </div>
                                 </div>
                             </div>
-                        </article>
+
+                        </div>
                     </div>
-                </div>
+
+
             </div>
+
         </div>
-    </section>
-    <footer class="footer">
-    </footer>
+        </section>
+    </div>
+    <p></p>
+    <div class="clothes_type">
+        <table>
+            <tr>
+                체크박스
+            </tr>
+            <tr>
+                체크박스
+            </tr>
+            <tr>
+                체크박스
+            </tr>
+            <tr>
+                체크박스
+            </tr>
+            <tr>
+                <td rowspan="6">
+                    <button type="submit" class="btn mb-3 btn-round btn-twitter text-left w-100">검색
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+</div>
+</div>
+</div>
+ </div>
+
+<!-- Social Icons-->
+<!-- For more icon options, visit https://fontawesome.com/icons?d=gallery&p=2&s=brands-->
+<div class="social-icons">
+    <div class="d-flex flex-row flex-lg-column justify-content-center align-items-center h-100 mt-3 mt-lg-0">
+        <a class="btn btn-dark m-3" href="/login"><i class="bi bi-person-fill"></i></a>
+        <a class="btn btn-dark m-3" href="#!"><i class="bi bi-box-arrow-right"></i></a>
+        <a class="btn btn-dark m-3" href="#!"><i class="bi bi-info-lg"></i></a>
+    </div>
+</div>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<!-- * *                               SB Forms JS                               * *-->
+<!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+<script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+
+
+<script>
+
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+
+        mapOption = {
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 7 // 지도의 확대 레벨
+        };
+
+    // 지도를 생성합니다
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    // 마커 리스트
+    var markers = [];
+    var LatLng = [];
+    var customOverlay;
+
+
+    // 마커 클러스터링
+    var clusterer = new kakao.maps.MarkerClusterer({
+        map: map,
+        markers: markers,
+        gridSize: 35,
+        averageCenter: true,
+        minLevel: 6,
+        disableClickZoom: true,
+        styles: [{
+            width: '53px', height: '52px',
+            background: 'url(cluster.png) no-repeat',
+            color: '#fff',
+            textAlign: 'center',
+            lineHeight: '54px'
+        }]
+    });
+
+
+    // 지도 위에 마커 생성 함수--------------------------------------
+    function displayMarker(locPosition) {
+
+        // 마커를 생성합니다
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: locPosition
+        });
+
+        // 생성된 마커를 클러스터에 추가
+        clusterer.addMarker(marker);
+
+        let callback = function (result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                // 추출한 도로명 주소를 해당 input의 value값으로 적용
+                $('#address').val(result[0].road_address.address_name);
+            }
+        }
+
+        // 지도 밑에 출력할 내용
+        // 현재 마커가 있는 곳의 경위도 좌표를 출력
+        // document.getElementById("latlng_coord").innerText = locPosition;
+
+        // 지도 중심좌표를 접속위치로 변경합니다
+        map.setCenter(locPosition);
+    }
+
+    //----------------------------------------------------------------------
+
+    // 오버레이 생성 함수--------------------------------------------------------------
+    function Overlay(position) {
+        console.log('오버레이 함수 안 위경도', LatLng)
+        customOverlay = new kakao.maps.CustomOverlay({
+            position: position,
+            content: '<div class="overlaybox">' +
+                '<div class="boxtitle">' + '<a href=../weather/?lat=' + LatLng[0] + '&lng=' + LatLng[1] + '>' + '오늘 날씨' + '</a>' + '</div>' +
+                '<ul>' +
+                '<li>최고 기온 : ' + '{{weather.Highest_temperature}}' + '</li>' +
+                '<li>최저 기온 : ' + '{{weather.Lowest_temperature}}' + '</li>' +
+                '</ul>' +
+                '<ul>' +
+                '<li>추천코디</li>' +
+                '</ul>' +
+                '</div>',
+            xAnchor: 0.3,
+            yAnchor: 0.91,
+            map: map
+        });
+
+        // customOverlay.setMap(map)
+    }
+
+    //----------------------------------------------------------
+
+
+    // 현재위치 표시하기
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+
+            var lat = position.coords.latitude,
+                lon = position.coords.longitude;
+
+            LatLng.push(lat)
+            LatLng.push(lon)
+
+            var locPosition = new kakao.maps.LatLng(lat, lon)
+
+            // 마커 표시
+            displayMarker(locPosition);
+            // 오버레이 표시
+            Overlay(locPosition);
+
+            console.log('현재위치 위경도:', LatLng)
+            LatLng = []
+
+
+        });
+
+
+    } else {
+
+        var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),
+            message = 'geolocation을 사용할 수 없어요'
+
+        displayMarker(locPosition);
+    }
+
+
+    //----------------------------------------------------------
+    $('#searchBtn').click(function () {
+        // 버튼을 click했을때
+        // 마커 저장된 클러스터러 클리어
+        clusterer.clear();
+        customOverlay.setMap(null)
+
+
+        // 주소-좌표 변환 객체를 생성합니다
+        var geocoder = new kakao.maps.services.Geocoder();
+
+        // 주소로 좌표를 검색합니다
+        geocoder.addressSearch($('#address').val(), function (result, status) {
+
+
+            // 정상적으로 검색이 완료됐으면
+            if (status === kakao.maps.services.Status.OK) {
+                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+
+                // 추출한 좌표를 통해 도로명 주소 추출
+                let lat = result[0].y;
+                let lng = result[0].x;
+
+                LatLng.push(lat)
+                LatLng.push(lng)
+                console.log('검색 주소 위경도:', LatLng)
+
+                LatLng = []
+
+                getAddr(lat, lng);
+
+                //주소 변수화
+                var address = document.getElementById('address').value;
+                console.log('주소 변수:', address)
+
+                function getAddr(lat, lng) {
+                    let geocoder = new kakao.maps.services.Geocoder();
+
+
+                    let coord = new kakao.maps.LatLng(lat, lng);
+                    callback = function (result, status) {
+                        if (status === kakao.maps.services.Status.OK) {
+                            // 추출한 도로명 주소를 해당 input의 value값으로 적용
+                            $('#address').val(result[0].road_address.address_name);
+
+                        }
+
+                    }
+
+                    geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+
+                }
+
+
+                console.log(coords.getLat());
+                console.log(coords.getLng());
+
+                LatLng.push(coords.getLat())
+                LatLng.push(coords.getLng())
+                console.log('도로명 위경도:', LatLng)
+
+
+                // 마커 생성 함수 사용
+                displayMarker(coords);
+
+                // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                map.setCenter(coords);
+
+                //오버레이
+                Overlay(coords);
+
+                LatLng = []
+
+
+            }
+        });
+    });
+    console.log('코드 실행 후 위경도:', LatLng)
+    //-----------------------------------------------------------
+    // 엔터로 입력 기능 구현
+    $(document).ready(function () {
+        $("#address").keyup(function (event) {
+            if (event.which === 13) {
+                $("#searchBtn").click();
+            }
+        });
+    });
+
+
+</script>
 </body>
 </html>
